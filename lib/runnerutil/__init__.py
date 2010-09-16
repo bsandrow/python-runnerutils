@@ -5,6 +5,8 @@ from sys        import argv
 @PACKAGE runnerutil
 """
 
+# TODO Build a multi-args parser and a subsequent runner base class (i.e. MultiArgRunnerBase)
+
 ########
 ## Validates an optspec structure
 ##
@@ -42,7 +44,7 @@ def create_parser(optspec):
 
 
 ########
-## Base Class for Runners
+## Runner Base Classes
 ##
 class RunnerBase(object):
     parse_ns = dict()       # a namespace for arg processing vars (useful for allowing subclasses to change behavior)
@@ -68,6 +70,8 @@ class RunnerBase(object):
         self.parse_ns['parsed_options'] = options
         self.parse_ns['leftover_args']  = args_left
 
+        # TODO Still need to expand options into attributes
+
     def create_parser(self):
         if getattr(self,'optspec',None) is None:
             raise RunnerError("Cannot create a parser: self.optspec() not defined")
@@ -82,7 +86,9 @@ class RunnerBase(object):
             del optdef['triggers']
             self.parser.add_option(*args,**kwargs)
 
-
+########
+## Exception Classes
+##
 class RunnerError(Exception):
     pass
 
