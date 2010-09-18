@@ -20,7 +20,5 @@ def get_class(runner_module_string):
 if __name__ == '__main__':
     runner_arg = argv[1]
     del argv[1]
-
     runner_class = get_class(runner_arg)
-
-    runner_class().run()
+    return(runner_class().run())
