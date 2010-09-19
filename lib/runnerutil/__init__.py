@@ -70,7 +70,7 @@ class RunnerBase(object):
         self.parse_ns['parsed_options'] = options
         self.parse_ns['leftover_args']  = args_left
 
-        # TODO Still need to expand options into attributes
+        self.__dict__.update(options.__dict__)
 
     def create_parser(self):
         if getattr(self,'optspec',None) is None:
