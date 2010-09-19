@@ -84,7 +84,7 @@ class RunnerBase(object):
         for optdef in self.optspec():
             args = optdef['triggers']
             del optdef['triggers']
-            self.parser.add_option(*args,**kwargs)
+            self.parser.add_option(*args,**optdef)
 
 ########
 ## Exception Classes
