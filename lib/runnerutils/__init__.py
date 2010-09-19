@@ -2,7 +2,7 @@ from optparse   import OptionParser
 from sys        import argv
 
 """
-@PACKAGE runnerutil
+@PACKAGE runnerutils
 """
 
 # TODO Build a multi-args parser and a subsequent runner base class (i.e. MultiArgRunnerBase)

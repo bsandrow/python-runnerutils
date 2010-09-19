@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 setup(
     name            = 'RunnerUtils',
     version         = '0.1',
-    packages        = ['lib/runnerutil'],
+    packages        = ['lib/runnerutils'],
     scripts         = ['scripts/pyrun'],
     author          = "Brandon Sandrowicz",
     author_email    = "brandon@sandrowicz.org",
