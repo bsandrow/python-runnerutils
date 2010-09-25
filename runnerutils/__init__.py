@@ -73,7 +73,7 @@ class RunnerBase(object):
         self.__dict__.update(options.__dict__)
 
     def create_parser(self):
-        if getattr(self,'optspec',None) is None:
+        if getattr(self,'options',None) is None:
             raise RunnerError("Cannot create a parser: self.optspec() not defined")
 
         parser_kwargs = {}
@@ -81,10 +81,10 @@ class RunnerBase(object):
             parser_kwargs = self.parser_opts()
 
         self.parser = OptionParser(**parser_kwargs)
-        for optdef in self.optspec():
-            args = optdef['triggers']
-            del optdef['triggers']
-            self.parser.add_option(*args,**optdef)
+        for option in self.options():
+            args = option['triggers']
+            del option['triggers']
+            self.parser.add_option(*args,**option)
 
 ########
 ## Exception Classes
