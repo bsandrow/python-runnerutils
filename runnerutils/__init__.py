@@ -1,16 +1,20 @@
-from optparse   import OptionParser
-from sys        import argv
+#!/usr/bin/env python
 
 """
 @PACKAGE runnerutils
+
+@TODO Build a multi-args parser and a subsequent runner base class (i.e. MultiArgRunnerBase)
+
 """
 
-# TODO Build a multi-args parser and a subsequent runner base class (i.e. MultiArgRunnerBase)
+from optparse   import OptionParser
+from sys        import argv
 
-########
-## Validates an option def structure
+##########
+## Legacy Code
 ##
 def validate_options(options):
+    """ Validates an option definition sctructure (the one used everywhere in runnerutils) """
     good_keys = [
         'type', 'action', 'dest', 'metavar', 'triggers', 'help', 'default',
         'nargs', 'const', 'callback', 'choices', 'callback_args',
@@ -24,18 +28,13 @@ def validate_options(options):
             if key not in good_keys:
                 raise OptionError("Bad key value: %s" % key)
 
-########
-## Push a set of args through an optspec-built OptionParser and return the
-## result.
-##
 def parse_args(options,args=argv):
+    """ Use an option definition structure to parse a bunch of args """
     parser = create_parser(options)
     return parser.parse_args(args)
 
-########
-## Build a OptionParser out of an optspec
-##
 def create_parser(options):
+    """ Build an OptionParser auto-magically out of an option definition """
     validate_options(options)
     parser = OptionParser()
     for option in options:
@@ -95,3 +94,6 @@ class RunnerError(Exception):
 
 class OptionError(Exception):
     pass
+
+if __name__ == '__main__':
+    print "You should not be here."
