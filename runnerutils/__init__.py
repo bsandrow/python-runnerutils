@@ -8,40 +8,41 @@ from sys        import argv
 # TODO Build a multi-args parser and a subsequent runner base class (i.e. MultiArgRunnerBase)
 
 ########
-## Validates an optspec structure
+## Validates an option def structure
 ##
-def validate(optspec):
+def validate_options(options):
     good_keys = [
-        'type', 'action', 'dest', 'metavar', 'trigger', 'help', 'default',
+        'type', 'action', 'dest', 'metavar', 'triggers', 'help', 'default',
         'nargs', 'const', 'callback', 'choices', 'callback_args',
         'callback_kwargs',
     ]
-    for optdef in optspec:
-        if 'triggers' not in optdef.keys():
-            raise OptSpecError("Missing triggers")
-        for key in optdef.keys():
+    for option in options:
+        if 'triggers' not in option.keys():
+            raise OptionError("Missing triggers")
+
+        for key in option.keys():
             if key not in good_keys:
-                raise OptSpecError("Bad key value: %s" % key)
+                raise OptionError("Bad key value: %s" % key)
 
 ########
 ## Push a set of args through an optspec-built OptionParser and return the
 ## result.
 ##
-def parse_args(optspec,args=argv):
-    parser = create_parser_from_optspec(optspec)
+def parse_args(options,args=argv):
+    parser = create_parser(options)
     return parser.parse_args(args)
 
 ########
 ## Build a OptionParser out of an optspec
 ##
-def create_parser(optspec):
+def create_parser(options):
+    validate_options(options)
     parser = OptionParser()
-    for optdef in optspec:
-        args = optdef['triggers']
-        del optdef['triggers']
-        parser.add_option(*args,**optdef)
+    for option in options:
+        args = option['triggers']
+        del option['triggers']
+        parser.add_option(*args,**option)
     return parser
-
 
 ########
 ## Runner Base Classes
@@ -92,5 +93,5 @@ class RunnerBase(object):
 class RunnerError(Exception):
     pass
 
-class OptSpecError(Exception):
+class OptionError(Exception):
     pass
