@@ -74,7 +74,7 @@ class RunnerBase(object):
 
     def create_parser(self):
         if getattr(self,'options',None) is None:
-            raise RunnerError("Cannot create a parser: self.optspec() not defined")
+            raise RunnerError("Cannot create a parser: self.options() not defined")
 
         parser_kwargs = {}
         if getattr(self,'parser_opts',None):
