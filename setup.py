@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name            = 'RunnerUtils',
+    name            = 'runnerutils',
     version         = '0.1',
     packages        = ['runnerutils'],
     scripts         = ['scripts/pyrun'],
