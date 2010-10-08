@@ -6,21 +6,50 @@ DESCRIPTION
     creating scripts or runners. The mainstay is the class RunnerBase which
     allows you to inherit this functionality into your own runner class.
 
-PYRUN
-    This script allows you to instantiate and run a runner class that is
-    installed in a package. Just specify the fully qualified path on the
-    command line:
-        pyrun [pyrun options] package_name.MyRunnerClass [MyRunnerClass options]
+RUNNERBASE
 
-RUNNERBASE USAGE
-    self.options()
+    RunnerBase is a base class meant for easing the creation of command-line
+    scripts (aka 'runners'). The following functions are baked-in for your
+    convenience:
 
-        This is required to be defined in your subclass in order to use
-        self.parse_args(). This function must return a list of option
-        definitions. An option definition is a dict that contains any kwargs
-        that might have been sent on to an OptionParser.add_option() call. The
-        only addition is the 'triggers' keyword, which must be a list of the
-        commandline args/triggers that will cause the action to occur. e.g.
+        RunnerBase.__init__()
+
+        The default __init__() function will accept a single arg of 'args'
+        which defaults to sys.argv. The only function that this really performs
+        is the automagickally call self.parse_args() without requiring every
+        subclass to define a self.__init__().
+
+        RunnerBase.parse_args()
+
+        Takes in an optional argument of 'args' (defaults to sys.argv). This
+        will parse the args using the option specification returned by
+        self.options() [This is *not* provided by RunnerBase]. Any options that
+        are parsed out of args will be created as attributes off of 'self'
+        (clobbering an pre-existing values).
+
+        If you want to disable any of the default behavior or add in fancier
+        mojo, then this function would have to be overridden. The design
+        decision is to cover the most common use-case (more specifically, *my*
+        common use-case).
+
+        RunnerBase._parser_init()
+
+        Recreates the parser itself (which resides at self._parser). This will
+        throw RunnerErrors if things don't go smoothly, or you forgot to do
+        something like define self.options()
+
+    There are a couple of functions that may be provided in the subclass to
+    control behavior in the super class (short of redefining the functions
+    completely):
+
+        RunnerBaseSubclass.options()
+
+        Returns a list() of dictionaries. Each dictionary is required to
+        contain a 'triggers' key-value pair. Otherwise, all of the kv-pairs in
+        the dictionary should be keyword args for the OptionParser.add_option()
+        function (see the Python docs for more detail). The 'triggers' key
+        should point at a list containing all of the triggers that will be
+        associated with this item (i.e. '--option1'). E.g.:
 
             def options(self):
                 return [
@@ -31,22 +60,48 @@ RUNNERBASE USAGE
                     }
                 ]
 
-    self.parse_args(args=sys.argv)
+        This function is required for the option parsing to happen; otherwise,
+        _parser_init() will throw a RunnerError.
 
-        Takes a list of arguments, and parses them using OptionParser + the
-        options specified in self.options(). self.options() must exist for this
-        to work correctly. All of the values of the options that are returned,
-        are merged into the existing attributes on your subclass instance.
-        WARNING: These values *will* clobber existing values. sys.argv is the
-        default if nothing is passed in.
 
-    self.create_parser()
+        RunnerBaseSubclass.parser_opts()
 
-        This is meant to be used internally most of the time, but it is exposed
-        so that people can do whatever they need to with it. This will raise a
-        RunnerError if self.options() doesn't exist. This will also grab a dict
-        from self.parser_opts() (if it exists) and pass it on to the
-        OptionParser() as kwargs during creation.
+        If this is defined, the returned value will be passed on to the
+        internal OptionParser constructor as kwargs (See the Python docs for
+        valid values).
+
+MULTI-COMMAND RUNNERBASE
+
+    This is variant of RunnerBase meant for runners that have a usage pattern of:
+
+            runner [options] command [command options]
+
+    [options] parsing info is still pulled from self.options(), but [command
+    options] is pulled from self.cmd_options(). The only differences are:
+
+        MultiCommandRunnerBase.cmd_options()
+
+        Required. Returns a dictionary where the keys are the names of the
+        commands, and the values are lists of dictionaries supplying the
+        options for each command (in the same format as self.options()).
+        For example:
+
+            def cmd_options(self):
+                return {
+                    'add': [
+                            { 'triggers': ['--dry-run','-n'], 'help': 'Dry run, not changes are permenant' },
+                            { 'triggers': ['--blah'], 'help': 'Do something' },
+                        ],
+                    'remove': [
+                            { 'triggers': ['--verbose','-v'], 'action':'store_true', 'help': 'Be noisy' },
+                        ],
+                }
+
+PYRUN
+    This script allows you to instantiate and run a runner class that is
+    installed in a package. Just specify the fully qualified path on the
+    command line:
+        pyrun [pyrun options] package_name.MyRunnerClass [MyRunnerClass options]
 
 EXAMPLES
     RunnerBase Example:
@@ -56,23 +111,26 @@ EXAMPLES
         class MyRunner(RunnerBase):
             def options(self):
                 return [
-                    {   'triggers': ['--opt1','-1'],
-                          'action': 'append',
-                            'dest': 'option1',
-                            'help': 'Option #1',
-                         'metavar': 'ARG',
+                    {   'triggers' : ['--opt1','-1'],
+                        'action'   : 'append',
+                        'dest'     : 'option1',
+                        'help'     : 'Option #1',
+                        'metavar'  : 'ARG',
                     },
-                    {   'triggers': ['--opt2','-2'],
-                          'action': 'store',
-                            'dest': 'option2',
-                         'default': None,
-                            'help': 'Option 2?',
+                    {   'triggers' : ['--opt2','-2'],
+                        'action'   : 'store',
+                        'dest'     : 'option2',
+                        'default'  : None,
+                        'help'     : 'Option 2?',
                     },
                 ]
             def __init__(self):
                 self.parse_args(args)
                 if self.option2 is None:
                     raise Exception("Option #2 is required!")
+
+BUGS
+    None Known, Contact me if you find one.
 
 LICENSE
     Copyright (c) 2010 Brandon Sandrowicz under MIT License
