@@ -97,11 +97,11 @@ MULTI-COMMAND RUNNERBASE
                         ],
                 }
 
-PYRUN
+RUNPY
     This script allows you to instantiate and run a runner class that is
     installed in a package. Just specify the fully qualified path on the
     command line:
-        pyrun [pyrun options] package_name.MyRunnerClass [MyRunnerClass options]
+        runpy [runpy options] package_name.MyRunnerClass [MyRunnerClass options]
 
 EXAMPLES
     RunnerBase Example:

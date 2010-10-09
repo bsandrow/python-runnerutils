@@ -4,7 +4,7 @@ setup(
     name            = 'runnerutils',
     version         = '0.1',
     packages        = ['runnerutils'],
-    scripts         = ['scripts/pyrun'],
+    scripts         = ['scripts/runpy'],
     author          = "Brandon Sandrowicz",
     author_email    = "brandon@sandrowicz.org",
     description     = "A package for creating python classes to run as scripts",
