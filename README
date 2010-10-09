@@ -3,8 +3,9 @@ NAME
 
 DESCRIPTION
     A toolkit to abstract away most of the common drudgery associated with
-    creating scripts or runners. The mainstay is the class RunnerBase which
-    allows you to inherit this functionality into your own runner class.
+    creating scripts or runners. These tools are implemented as a set of base
+    classes that automagically do the dirty work (or at least simplify the
+    dirty work as much as possible).
 
 RUNNERBASE
 
